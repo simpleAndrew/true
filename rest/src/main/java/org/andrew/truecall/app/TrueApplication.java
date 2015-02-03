@@ -16,13 +16,13 @@ import org.andrew.truecall.app.config.tools.UserToolFactory;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
-public class TruaApplication extends Application<TrueAppConfiguration> {
+public class TrueApplication extends Application<TrueAppConfiguration> {
 
     private static final int DEFAULT_NUMBER_OF_DUMPING_THREADS = 1;
     private static final String APP_NAME = "a.shchyolok-sample-dropw-truecaller";
 
     public static void main(String[] args) throws Exception {
-        new TruaApplication().run(args);
+        new TrueApplication().run(args);
     }
 
     @Override
