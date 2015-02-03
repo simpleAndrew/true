@@ -1,0 +1,79 @@
+#Default configs from requirements. Can be cnanged on demand for testing
+queryLimits:
+  #number of records to return on statistics request
+  requestLimitation: 10
+  #number of days to work with for statistics
+  daysTracked: 10
+
+#User DB setup - could be completely separate DB to tune performance
+userStorage:
+  #create table itself
+  userTableCreateScript: "create table true_user(id long auto_increment primary key, name varchar(100));"
+  #scripts to create basic set user
+  sampleUsersLoadScript: [
+    "insert into true_user (name) values ('Jack')",
+    "insert into true_user (name) values ('John')",
+    "insert into true_user (name) values ('Jim')",
+    "insert into true_user (name) values ('Jimbo')",
+    "insert into true_user (name) values ('Jango')"
+    ]
+  #DB Source setup
+  userSourceFactory:
+    driverClass: "org.h2.Driver"
+    user: "user"
+    password: "user"
+    url: "jdbc:h2:mem:true-db-user;DB_CLOSE_DELAY=-1"
+    autoCommitByDefault: true
+    properties:
+      charSet: UTF-8
+    validationQuery: "SELECT 1"
+
+
+#Statistics environment setup
+statisticStorage:
+  #create script
+  statisticsTableCreateScript: "create table true_user_statistics(id long auto_increment primary key, viewer_id long, requested_user_id long, read_date timestamp)"
+  #indexes to register
+  statisticTableIndexScripts: [
+    "create index read_id_index on true_user_statistics (requested_user_id)",
+    "create index date_index on true_user_statistics (read_date)"
+    ]
+  #list of Sources to use as shards for statistics storing and reading
+  statisticsSourceFactory:
+    - driverClass: "org.h2.Driver"
+      user: "user"
+      password: "user"
+      url: "jdbc:h2:mem:true-db-stat-1;DB_CLOSE_DELAY=-1"
+      autoCommitByDefault: true
+      properties:
+        charSet: UTF-8
+      validationQuery: "SELECT 1"
+    - driverClass: "org.h2.Driver"
+      user: "user"
+      password: "user"
+      url: "jdbc:h2:mem:true-db-stat-2;DB_CLOSE_DELAY=-1"
+      autoCommitByDefault: true
+      properties:
+        charSet: UTF-8
+      validationQuery: "SELECT 1"
+
+  #archive storage to store redundant data
+  dumpSourceFactory:
+    driverClass: "org.h2.Driver"
+    user: "user"
+    password: "user"
+    url: "jdbc:h2:mem:true-db-stat-dump;DB_CLOSE_DELAY=-1"
+    autoCommitByDefault: true
+    properties:
+      charSet: UTF-8
+    validationQuery: "SELECT 1"
+
+  #Config for dumping procedure.
+  #It tunes the way records will be archived from active tables to archive
+  dumpingProperties:
+    executionDelay: 1
+    executionUnit: DAYS
+    #number of records that might be moved to archive
+    criticalSize: 1
+    #number of days record could be counted acitve. All older records will be counted as redundant and moved to archive.
+    shiftInDaysToMove: 10
