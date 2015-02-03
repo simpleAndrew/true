@@ -71,9 +71,9 @@ statisticStorage:
   #Config for dumping procedure.
   #It tunes the way records will be archived from active tables to archive
   dumpingProperties:
-    executionDelay: 1
-    executionUnit: DAYS
+    executionDelay: 10
+    executionUnit: SECONDS
     #number of records that might be moved to archive
-    criticalSize: 1
+    criticalSize: 5
     #number of days record could be counted acitve. All older records will be counted as redundant and moved to archive.
-    shiftInDaysToMove: 10
+    shiftInDaysToMove: 0
